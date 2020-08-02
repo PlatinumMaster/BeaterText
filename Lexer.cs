@@ -38,8 +38,11 @@ namespace BeaterText
                         l = input.ReadLine();
                     }
                     str += l.Substring(l.IndexOf("\"") + 1, l.LastIndexOf("\"") - l.IndexOf("\"") - 1);
+                    str = str.Replace("\\c", "\\xF000븁\\x0000");
+                    str = str.Replace("\\l", "\\xF000븀\\x0000");
+                    str = str.Replace("{PLAYER}", "\\xF000Ā\\x0001\\x0000");
+                    str = str.Replace("{RIVAL}", "\\xF000Ā\\x0001\\x0001");
                     strings.Add(str);
-                    //Console.WriteLine(str);
                 }
                 else if (l.StartsWith("#"))
                     continue;
@@ -58,13 +61,17 @@ namespace BeaterText
                 int count = 0;
                 for (int j = 0; j < strings[i].Count(); j++)
                 {
-                    switch(strings[i][j].ToString())
+                    switch(strings[i][j])
                     {
-                        case "\\":
-                            if (strings[i][j+1].Equals('x'))
-                                j += 5;
-                            else
-                                j += 1;
+                        case '\\':
+                            switch (strings[i][++j])
+                            {
+                                case 'x':
+                                    j += 4;
+                                    break;
+                                default:
+                                    break;
+                            }
                             break;
                         default:
                             break;
@@ -97,18 +104,22 @@ namespace BeaterText
                 int key = mainKey;
                 for (int j = 0; j < strings[i].Length; j++)
                 {
-                    switch (strings[i][j].ToString())
+                    Console.WriteLine(strings[i][j]);
+                    switch (strings[i][j])
                     {
-                        case "\\":
-                            if (strings[i][j + 1].Equals('x'))
+                        case '\\':
+                            switch (strings[i][++j])
                             {
-                                b.Write(EncryptCharacter(strings[i].Substring(j, 6), key));
-                                j += 5;
-                            }
-                            else
-                            {
-                                b.Write(EncryptCharacter(strings[i].Substring(j, 2), key));
-                                j += 1;
+                                case 'x':
+                                    b.Write(EncryptCharacter(strings[i].Substring(j - 1, 6), key));
+                                    j += 4;
+                                    break;
+                                case 'n':
+                                    b.Write(EncryptCharacter("\\n", key));
+                                    break;
+                                default:
+                                    b.Write(EncryptCharacter(strings[i].Substring(j, 2), key));
+                                    break;
                             }
                             break;
                         default:

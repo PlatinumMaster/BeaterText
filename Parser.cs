@@ -54,12 +54,17 @@ namespace BeaterText
 
                     for (int j = characterCount[i] - 1; j >= 0; j--)
                     {
-                        Console.Write(DecryptCharacter(encrypted_text[j], key));
                         s.Insert(0, DecryptCharacter(encrypted_text[j], key));
                         if (DecryptCharacter(encrypted_text[j], key).Equals("\\n"))
                             s.Insert(2, "\",\n\"");
                         key = (key >> 3 | key << 13) & 0xFFFF;
                     }
+
+
+                    s.Replace("\\xF000븁\\x0000", "\\c"); // Clear character for Gen V.
+                    s.Replace("\\xF000븀\\x0000", "\\l"); // Scroll to next line.
+                    s.Replace("\\xF000Ā\\x0001\\x0000", "{PLAYER}"); // Player name.
+                    s.Replace("\\xF000Ā\\x0001\\x0001", "{RIVAL}"); // Rival name.
 
                     sw.Write(s.ToString());
                     sw.Write("\"]\n\n");
