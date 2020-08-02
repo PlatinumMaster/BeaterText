@@ -6,7 +6,24 @@ namespace BeaterText
     {
         static void Main(string[] args)
         {
-            TextParser p = new TextParser(args[0], args[1]);
+            try
+            {
+                switch (args[0].ToLower())
+                {
+                    case "-d":
+                        TextParser p = new TextParser(args[1], args[2]);
+                        break;
+                    case "-m":
+                        TextLexer l = new TextLexer(args[1], args[2]);
+                        break;
+                }
+            }
+            catch (IndexOutOfRangeException)
+            {
+                Console.WriteLine(usage);
+            }
         }
+
+        private static string usage = $"Bah humbug";
     }
 }

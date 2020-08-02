@@ -1,5 +1,4 @@
-﻿using Microsoft.VisualBasic;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -50,39 +49,39 @@ namespace BeaterText
 
                     int key = encrypted_text.Last() ^ 0xFFFF;
 
+                    sw.WriteLine($"# STR_{i}");
+                    sw.Write("[\"");
+
                     for (int j = characterCount[i] - 1; j >= 0; j--)
                     {
-                        encrypted_text[j] ^= (ushort)key;
+                        Console.Write(DecryptCharacter(encrypted_text[j], key));
+                        s.Insert(0, DecryptCharacter(encrypted_text[j], key));
+                        if (DecryptCharacter(encrypted_text[j], key).Equals("\\n"))
+                            s.Insert(2, "\",\n\"");
                         key = (key >> 3 | key << 13) & 0xFFFF;
                     }
 
-                    sw.WriteLine($"# STR_{i}");
-                    sw.Write("[\"");
-                    for (int j = 0; j < characterCount[i]; j++)
-                    {
-                        sw.Write(ConvertToCharacter(encrypted_text[j]));
-                        if (ConvertToCharacter(encrypted_text[j]).Equals("\\n") || ConvertToCharacter(encrypted_text[j]).Equals("\\c"))
-                            sw.Write("\",\n\"");
-                    }
+                    sw.Write(s.ToString());
                     sw.Write("\"]\n\n");
                 }
+
+                sw.WriteLine("END_MSG");
             }
+
         }
-
-        public string ConvertToCharacter(ushort encrypted)
+        public string DecryptCharacter(ushort encrypted, int key)
         {
-
-            switch (encrypted)
+            switch (encrypted ^ key)
             {
                 case 0xFFFF:
                     return "$";
                 case 0xFFFE:
                     return "\\n";
                 default:
-                    if (encrypted > 0x14 && encrypted < 0xF000)
-                        return Convert.ToChar(encrypted).ToString();
+                    if ((encrypted ^ key) > 0x14 && (encrypted ^ key) < 0xF000)
+                        return Convert.ToChar(encrypted ^ key).ToString();
                     else
-                        return $"\\{encrypted:X4}";
+                        return $"\\x{(encrypted ^ key):X4}";
             }
         }
     }
