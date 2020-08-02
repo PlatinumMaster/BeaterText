@@ -49,7 +49,7 @@ namespace BeaterText
             b.Write((ushort)0x1); // nSections. We only use 1.
             b.Write((ushort)strings.Count); // Number of entries.
 
-            uint sectionSize = 0;
+            uint sectionSize = Convert.ToUInt32(4 + (8 * strings.Count));
             List<int> characterCounts = new List<int>();
 
             // Determine each string length;
@@ -62,12 +62,11 @@ namespace BeaterText
                     {
                         case "\\":
                             if (strings[i][j+1].Equals('x'))
-                                j += 6;
+                                j += 5;
                             else
-                                j += 2;
+                                j += 1;
                             break;
                         default:
-                            j++;
                             break;
                     }
                     count++;
@@ -98,11 +97,6 @@ namespace BeaterText
                 int key = mainKey;
                 for (int j = 0; j < strings[i].Length; j++)
                 {
-                    if (j == strings[i].Length - 1)
-                    {
-                        b.Write((ushort)key ^ 0xFFFF);
-                        break;
-                    }
                     switch (strings[i][j].ToString())
                     {
                         case "\\":
@@ -119,7 +113,7 @@ namespace BeaterText
                             break;
                         default:
                             b.Write(EncryptCharacter(strings[i][j].ToString(), key));
-                            continue;
+                            break;
                     }
                     key = (key << 3 | key >> 13) & 0xFFFF;
                 }
@@ -141,9 +135,12 @@ namespace BeaterText
                     return Convert.ToUInt16(0xFFFE ^ key);
                 default:
                     if (decrypted.StartsWith('\\') && decrypted[1] == 'x')
-                        return Convert.ToUInt16(ushort.Parse(decrypted.Substring(2), 
+                        return Convert.ToUInt16(ushort.Parse(decrypted.Substring(2),
                             System.Globalization.NumberStyles.HexNumber) ^ key);
-                    return Convert.ToUInt16(char.Parse(decrypted) ^ key);
+                    else if (decrypted.StartsWith('\\'))
+                        return Convert.ToUInt16(decrypted[1] ^ key);
+                    else
+                        return Convert.ToUInt16(decrypted[0] ^ key);
             }
         }
     }
