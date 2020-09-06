@@ -37,6 +37,7 @@ namespace BeaterText
                         str += l.Substring(l.IndexOf("\"") + 1, l.LastIndexOf("\"") - l.IndexOf("\"") - 1);
                         l = input.ReadLine();
                     }
+                    // TODO : Better preprocessing
                     str += l.Substring(l.IndexOf("\"") + 1, l.LastIndexOf("\"") - l.IndexOf("\"") - 1);
                     str = str.Replace("\\c", "\\xF000븁\\x0000");
                     str = str.Replace("\\l", "\\xF000븀\\x0000");
@@ -113,9 +114,6 @@ namespace BeaterText
                                 case 'x':
                                     b.Write(EncryptCharacter(strings[i].Substring(j - 1, 6), key));
                                     j += 4;
-                                    break;
-                                case 'n':
-                                    b.Write(EncryptCharacter("\\n", key));
                                     break;
                                 default:
                                     b.Write(EncryptCharacter(strings[i].Substring(j, 2), key));

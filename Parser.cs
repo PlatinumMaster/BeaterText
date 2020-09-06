@@ -60,7 +60,10 @@ namespace BeaterText
                         key = (key >> 3 | key << 13) & 0xFFFF;
                     }
 
+                    // TODO: Implement text decompression for compresed text.
 
+
+                    // Stupid preprocessing for common things.
                     s.Replace("\\xF000븁\\x0000", "\\c"); // Clear character for Gen V.
                     s.Replace("\\xF000븀\\x0000", "\\l"); // Scroll to next line.
                     s.Replace("\\xF000Ā\\x0001\\x0000", "{PLAYER}"); // Player name.
@@ -83,7 +86,7 @@ namespace BeaterText
                 case 0xFFFE:
                     return "\\n";
                 default:
-                    if ((encrypted ^ key) > 0x14 && (encrypted ^ key) < 0xF000)
+                    if ((encrypted ^ key) > 0x14 && (encrypted ^ key) < 0xD800)
                         return Convert.ToChar(encrypted ^ key).ToString();
                     else
                         return $"\\x{(encrypted ^ key):X4}";
