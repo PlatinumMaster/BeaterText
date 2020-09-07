@@ -24,6 +24,6 @@ namespace BeaterText
             }
         }
 
-        private static string usage = "BeaterText: Usage\n" + "To decompile: BeaterText -d <input> <output>\n" + "To compile: BeaterText -d <input> <output>";
+        private static string usage = "BeaterText: Usage\n" + "To decompile: BeaterText -d <input> <output>\n" + "To compile: BeaterText -m <input> <output>";
     }
 }

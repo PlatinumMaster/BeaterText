@@ -14,7 +14,7 @@ namespace BeaterText
         {
             // Initialize the text file we will read from.
             input = new StreamReader(text);
-            b = new BinaryWriter(File.Open(output, FileMode.Open));
+            b = new BinaryWriter(File.Open(output, FileMode.OpenOrCreate));
             WriteText();
             b.Close();
         }
