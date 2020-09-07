@@ -105,7 +105,6 @@ namespace BeaterText
                 int key = mainKey;
                 for (int j = 0; j < strings[i].Length; j++)
                 {
-                    Console.WriteLine(strings[i][j]);
                     switch (strings[i][j])
                     {
                         case '\\':
@@ -114,6 +113,9 @@ namespace BeaterText
                                 case 'x':
                                     b.Write(EncryptCharacter(strings[i].Substring(j - 1, 6), key));
                                     j += 4;
+                                    break;
+                                case 'n':
+                                    b.Write(EncryptCharacter("\\n", key));
                                     break;
                                 default:
                                     b.Write(EncryptCharacter(strings[i].Substring(j, 2), key));
